@@ -376,7 +376,8 @@ git push origin v0.4.2-fork.2
    - `bun run build`
    - `bun pm pack` 生成 npm tarball
    - 生成 `opencode-tps-meter-dist.tar.gz`
-   - 强制更新 `release` 分支，并创建 `release-vX` 分支
+   - 生成一个**仅含发布文件**的 release 树（`package.json`、`dist/`、`README.md`、`LICENSE`、`FORK.md`），去掉源码、`scripts` 和 `devDependencies`
+   - 把该树强制推送到 `release` 和 `release-vX` 分支
    - 创建 GitHub Release 并上传两个资产
 
 ### 9.4 资产说明
@@ -389,6 +390,7 @@ git push origin v0.4.2-fork.2
 ### 9.5 注意
 
 - Git 安装请使用 `release` 或 `release-vX` 分支，**不要用 tag**：tag 指向源码提交，里面没有 `dist/`
+- release 分支是纯发布树，不是源码快照：不含 `src/`、`scripts`、`devDependencies`。这样 npm 装 Git 依赖时不需要在本地安装依赖或执行构建，避免 `git dep preparation failed`
 - 不要同时安装上游 npm 包和本 fork，插件 id 相同，可能互相覆盖或被去重
 - `dist/` 仍然被 `.gitignore` 忽略；只有 release 分支会强制提交它
 - 版本号里的 `-fork.N` 是 prerelease，语义上低于 `0.4.2`

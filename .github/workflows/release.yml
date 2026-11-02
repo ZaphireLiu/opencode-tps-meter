@@ -35,21 +35,41 @@ jobs:
           tar -czf assets/opencode-tps-meter-dist.tar.gz -C dist .
 
       - name: Publish git-installable release branches
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+
+          # Only ship what a consumer needs. A full source checkout makes the package
+          # manager run its own dependency install/prepare step for a git dependency,
+          # which is slow and can fail; a package-only tree installs cleanly.
+          rm -rf release-pkg
+          mkdir release-pkg
+          cp -r dist README.md LICENSE FORK.md release-pkg/
+          python3 - <<'PY'
+          import json
+
+          with open("package.json") as fh:
+              pkg = json.load(fh)
+
+          for key in ("scripts", "devDependencies", "peerDependencies", "peerDependenciesMeta"):
+              pkg.pop(key, None)
+
+          with open("release-pkg/package.json", "w") as fh:
+              json.dump(pkg, fh, indent=2)
+              fh.write("\n")
+          PY
+
+          cd release-pkg
+          git init -q
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "release: ${GITHUB_REF_NAME}"
 
-          # The release branch carries the built dist/ so `opencode plugin add
-          # git+https://...#release` works without a build step on the user's machine.
-          git checkout -B release
-          git add -f dist
-          git commit -m "release: ${GITHUB_REF_NAME}"
-          git push --force origin release
-
-          # Pinned branch for this exact version.
-          git branch -f "release-${VERSION}" HEAD
-          git push origin "release-${VERSION}"
+          REMOTE="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force "$REMOTE" HEAD:refs/heads/release
+          git push --force "$REMOTE" HEAD:refs/heads/release-${VERSION}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
