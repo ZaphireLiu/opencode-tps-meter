@@ -180,8 +180,8 @@ describe("TUI plugin", () => {
     await setup.flush();
     const frame = setup.captureCharFrame();
 
-    expect(frame).toContain("TPS");
     expect(frame).toContain("50 tok");
+    expect(frame).not.toContain("TPS");
   });
 
   it("does not double count a delta followed by the full part update", async () => {
@@ -284,9 +284,9 @@ describe("TUI plugin", () => {
     await setup.flush();
     const frame = setup.captureCharFrame();
 
-    expect(frame).toContain("TPS");
     expect(frame).toContain("1 tok");
     expect(frame).not.toContain("2 tok");
+    expect(frame).not.toContain("TPS");
   });
 
   it("does not double count a repeated completed message's cache usage", async () => {
@@ -979,7 +979,7 @@ describe("TUI plugin", () => {
     const frame = delayed.captureCharFrame();
 
     expect(frame).toContain("TPS");
-    expect(frame).toContain("2 tok");
+    expect(frame).not.toContain("tok");
 
     for (const callback of disposeCallbacks) {
       await callback();
@@ -1064,8 +1064,8 @@ describe("TUI plugin", () => {
     await setup.flush();
     const frame = setup.captureCharFrame();
 
-    expect(frame).toContain("TPS");
     expect(frame).toContain("2 tok");
+    expect(frame).not.toContain("TPS");
 
     for (const callback of disposeCallbacks) {
       await callback();
@@ -1158,8 +1158,8 @@ describe("TUI plugin", () => {
     await setup.flush();
     const frame = setup.captureCharFrame();
 
-    expect(frame).toContain("TPS");
     expect(frame).toContain("1 tok");
+    expect(frame).not.toContain("TPS");
 
     for (const callback of disposeCallbacks) {
       await callback();

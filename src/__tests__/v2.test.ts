@@ -1539,6 +1539,10 @@ describe("v2 optional surfaces", () => {
     });
     text({ ...textDelta("ses-ttft", "first chunk of output"), created: base + 250 });
     text({ ...textDelta("ses-ttft", " and the rest of it"), created: base + 300 });
+    handlers.get("session.step.ended")!({
+      ...stepEnded("ses-ttft", "stop", { output: 10, reasoning: 0 }),
+      created: base + 400,
+    });
     await delay(120);
 
     const footer = claims.find((claim) => claim.after === "prompt.footer.status");
@@ -1549,6 +1553,7 @@ describe("v2 optional surfaces", () => {
     });
     await setup.flush();
     expect(setup.captureCharFrame()).toContain("ttft 250ms");
+    expect(setup.captureCharFrame()).not.toContain("TPS");
 
     await (cleanup as unknown as () => void | Promise<void>)?.();
   });

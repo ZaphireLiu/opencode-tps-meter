@@ -239,7 +239,7 @@ describe("v1 multi-session footer", () => {
     const frame = await renderFrame("main-solo");
 
     expect(frame).toContain("TPS");
-    expect(frame).toContain("tok");
+    expect(frame).not.toContain("tok");
     expect(frame).not.toContain("Σ");
   });
 

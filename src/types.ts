@@ -26,7 +26,7 @@ export interface Config {
   /** Rolling window duration for TPS calculation in milliseconds (default: 1000) */
   rollingWindowMs: number;
 
-  /** Whether to show average TPS (default: true) */
+  /** Whether to show average TPS (default: false; ignored while streamOnlyTps is on) */
   showAverage: boolean;
 
   /** Whether to show instantaneous TPS (default: true) */
@@ -44,8 +44,9 @@ export interface Config {
   showTtft: boolean;
 
   /**
-   * Whether to show only TPS while a step is generating. Average, token count, cache and
-   * TTFT then appear once that step settles (default: false)
+   * Treat the rate as a streaming-only signal: a generating step shows only the live TPS,
+   * and a settled step shows the usage summary (tokens, cache, TTFT) without the rate or
+   * average (default: true)
    */
   streamOnlyTps: boolean;
 

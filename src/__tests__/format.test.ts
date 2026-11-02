@@ -76,10 +76,8 @@ describe("formatSessionCacheHit", () => {
   });
 });
 
-describe("formatMeterText streamOnlyTps", () => {
-  const config = { ...defaultConfig, streamOnlyTps: true, showTtft: true };
-
-  it("renders only the live rate while a step is generating", () => {
+describe("formatMeterText with streamOnlyTps defaults", () => {
+  it("streams only the live rate", () => {
     const reading = meter({
       active: true,
       instantTps: 92.4,
@@ -88,22 +86,48 @@ describe("formatMeterText streamOnlyTps", () => {
       cacheReadTokens: 91,
       inputTokens: 9,
     });
-    expect(formatMeterText(reading, config)).toBe("92.4 TPS");
+    expect(formatMeterText(reading, defaultConfig)).toBe("92.4 TPS");
   });
 
-  it("renders the full line once the step settles", () => {
+  it("settles to a usage summary without rate or average", () => {
+    const reading = meter({
+      active: false,
+      instantTps: 0,
+      avgTps: 78.1,
+      totalTokens: 1842,
+      cacheReadTokens: 91,
+      inputTokens: 9,
+    });
+    expect(formatMeterText(reading, defaultConfig)).toBe("1,842 tok · cache 91%");
+  });
+
+  it("appends the session cache rate once it is known", () => {
     const reading = meter({
       active: false,
       avgTps: 78.1,
       totalTokens: 1842,
       cacheReadTokens: 91,
       inputTokens: 9,
+      sessionCacheReadTokens: 640,
+      sessionCacheWriteTokens: 0,
+      sessionInputTokens: 360,
     });
-    expect(formatMeterText(reading, config)).toBe("78.1 TPS · avg 78.1 · 1,842 tok · cache 91%");
+    expect(formatMeterText(reading, defaultConfig)).toBe(
+      "1,842 tok · cache 91% · session cache 64%"
+    );
+  });
+});
+
+describe("formatMeterText with streamOnlyTps off", () => {
+  const config = { ...defaultConfig, streamOnlyTps: false, showAverage: true };
+
+  it("keeps the upstream streaming line", () => {
+    const reading = meter({ active: true, instantTps: 92.4, avgTps: 78.1, totalTokens: 1842 });
+    expect(formatMeterText(reading, config)).toBe("92.4 TPS · avg 78.1 · 1,842 tok");
   });
 
-  it("leaves the default streaming line unchanged when the option is off", () => {
-    const reading = meter({ active: true, instantTps: 92.4, avgTps: 78.1, totalTokens: 1842 });
-    expect(formatMeterText(reading, defaultConfig)).toBe("92.4 TPS · avg 78.1 · 1,842 tok");
+  it("keeps the upstream settled line", () => {
+    const reading = meter({ active: false, avgTps: 78.1, totalTokens: 1842, cacheReadTokens: 91, inputTokens: 9 });
+    expect(formatMeterText(reading, config)).toBe("78.1 TPS · avg 78.1 · 1,842 tok · cache 91%");
   });
 });

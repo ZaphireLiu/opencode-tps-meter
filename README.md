@@ -16,11 +16,14 @@
 
 ```
 ╔═══════════════════════════════════════════════════╗
-║  92.4 TPS · avg 78.1 · 1,842 tok · cache 91%      ║
+║  92.4 TPS                                         ║
+║  1,842 tok · cache 91% · session cache 64%        ║
 ╚═══════════════════════════════════════════════════╝
 ```
 
 A live tokens-per-second meter plugin for OpenCode. Track AI token throughput in real-time with a configurable rolling window display. Only tracks **assistant role** messages — user and system messages are automatically excluded from metrics. File parts are also excluded from token counting.
+
+> **Fork defaults:** `streamOnlyTps` is on and `showAverage` is off. While a step generates the footer shows only the live rate; once it settles the rate and average disappear and the usage summary (tokens, cache, TTFT) takes over.
 
 > **Note:** Time display is disabled by default. Enable with `showElapsed: true` in configuration.
 
@@ -258,13 +261,13 @@ Create `.opencode/tps-meter.json` in your project root:
   "updateIntervalMs": 50,
   "initialDisplayDelayMs": 10,
   "rollingWindowMs": 1000,
-  "showAverage": true,
+  "showAverage": false,
   "showInstant": true,
   "showTotalTokens": true,
   "showElapsed": false,
   "showCacheHit": true,
   "showTtft": false,
-  "streamOnlyTps": false,
+  "streamOnlyTps": true,
   "format": "compact",
   "minVisibleTPS": 0,
   "fallbackTokenHeuristic": "chars_div_4",
@@ -285,7 +288,7 @@ To show elapsed time in the meter:
 }
 ```
 
-Footer: `92.4 TPS · avg 78.1 · 1,842 tok · 00:23`
+Footer: `1,842 tok · 00:23 · cache 91%`
 
 ### Default Configuration
 
@@ -296,13 +299,13 @@ Footer: `92.4 TPS · avg 78.1 · 1,842 tok · 00:23`
 | `updateIntervalMs` | `number` | `50` | UI update interval in milliseconds |
 | `initialDisplayDelayMs` | `number` | `10` | Extra delay before the first live reading. A reading also waits until a rate is measurable (about 50ms of output) |
 | `rollingWindowMs` | `number` | `1000` | Rolling window for TPS calculation |
-| `showAverage` | `boolean` | `true` | Show average TPS in display |
+| `showAverage` | `boolean` | `false` | Show average TPS in display (ignored while `streamOnlyTps` is on) |
 | `showInstant` | `boolean` | `true` | Show instantaneous TPS in display |
 | `showTotalTokens` | `boolean` | `true` | Show total token count |
 | `showElapsed` | `boolean` | `false` | Show elapsed time |
 | `showCacheHit` | `boolean` | `true` | Show the prompt cache hit rate (provider-reported) |
 | `showTtft` | `boolean` | `false` | Show time to first token in the footer |
-| `streamOnlyTps` | `boolean` | `false` | While a step is generating, show only TPS; avg, tokens, cache and TTFT appear once it settles |
+| `streamOnlyTps` | `boolean` | `true` | Show the rate only while a step generates; the settled line drops the rate and average and keeps tokens, cache and TTFT |
 | `format` | `string` | `"compact"` | Reserved: `compact`, `verbose` or `minimal` is accepted but does not change the display yet |
 | `minVisibleTPS` | `number` | `0` | Minimum TPS value to trigger display |
 | `fallbackTokenHeuristic` | `string` | `"chars_div_4"` | Token counting method |
@@ -360,7 +363,7 @@ footer next to tool time and overhead. Set `showTtft: true` (or `TPS_METER_SHOW_
 keep it in the compact footer as well:
 
 ```
-92.4 TPS · avg 78.1 · 1,842 tok · ttft 1.2s
+1,842 tok · cache 91% · session cache 64% · ttft 1.2s
 ```
 
 It stays on the last measured turn until the next one starts, and is omitted while the value is
@@ -372,16 +375,16 @@ first token.
 
 ### Footer (TUI, both hosts)
 
-While output streams, the leading figure is the live rate:
+While output streams, the line is just the live rate:
 
 ```
-92.4 TPS · avg 78.1 · 1,842 tok
+92.4 TPS
 ```
 
-Once the step settles it becomes the step's average, and the cache figures appear:
+Once the step settles the rate disappears and the line becomes the usage summary:
 
 ```
-78.1 TPS · avg 78.1 · 1,842 tok · cache 91% · session cache 64%
+1,842 tok · cache 91% · session cache 64%
 ```
 
 `showElapsed: true` adds ` · 00:23`, and `showTtft: true` (v2) adds ` · ttft 1.2s`. On v2,

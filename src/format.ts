@@ -105,20 +105,22 @@ export function formatElapsedTime(ms: number): string {
  * settles it becomes the average, so a frozen meter reads as a summary rather than a
  * stale live value.
  *
- * With `streamOnlyTps`, a generating step renders only that rate; every other field is
- * held back until the step settles, which keeps the live line to a single changing number.
+ * With `streamOnlyTps`, the rate is treated as a streaming-only signal: a generating step
+ * renders only that rate, and a settled step drops both the rate and the average, leaving
+ * the usage summary (tokens, cache, and any extra fields added by the host).
  */
 export function formatMeterText(reading: MeterReading, config: Config): string {
   const parts: string[] = [];
-  const displayTps = reading.active ? reading.instantTps : reading.avgTps;
+  const streaming = reading.active;
+  const displayTps = streaming ? reading.instantTps : reading.avgTps;
 
-  if (config.showInstant) {
+  if (config.showInstant && (streaming || !config.streamOnlyTps)) {
     parts.push(`${displayTps.toFixed(1)} TPS`);
   }
-  if (config.streamOnlyTps && reading.active) {
+  if (config.streamOnlyTps && streaming) {
     return parts.length > 0 ? parts.join(" · ") : "TPS meter";
   }
-  if (config.showAverage) {
+  if (config.showAverage && !config.streamOnlyTps) {
     parts.push(`avg ${reading.avgTps.toFixed(1)}`);
   }
   if (config.showTotalTokens) {
