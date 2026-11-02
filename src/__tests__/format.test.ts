@@ -11,9 +11,11 @@ import {
   cacheHitRatio,
   formatCacheHit,
   formatCachePercent,
+  formatMeterText,
   formatSessionCacheHit,
   type MeterReading,
 } from "../format.js";
+import { defaultConfig } from "../config.js";
 
 /** A settled reading with no prompt accounting, filled in per test. */
 function meter(partial: Partial<MeterReading>): MeterReading {
@@ -71,5 +73,37 @@ describe("formatSessionCacheHit", () => {
     expect(formatSessionCacheHit(meter({}))).toBeNull();
     // The latest step's accounting is a separate field set and must not leak in here.
     expect(formatSessionCacheHit(meter({ cacheReadTokens: 1000, inputTokens: 0 }))).toBeNull();
+  });
+});
+
+describe("formatMeterText streamOnlyTps", () => {
+  const config = { ...defaultConfig, streamOnlyTps: true, showTtft: true };
+
+  it("renders only the live rate while a step is generating", () => {
+    const reading = meter({
+      active: true,
+      instantTps: 92.4,
+      avgTps: 78.1,
+      totalTokens: 1842,
+      cacheReadTokens: 91,
+      inputTokens: 9,
+    });
+    expect(formatMeterText(reading, config)).toBe("92.4 TPS");
+  });
+
+  it("renders the full line once the step settles", () => {
+    const reading = meter({
+      active: false,
+      avgTps: 78.1,
+      totalTokens: 1842,
+      cacheReadTokens: 91,
+      inputTokens: 9,
+    });
+    expect(formatMeterText(reading, config)).toBe("78.1 TPS · avg 78.1 · 1,842 tok · cache 91%");
+  });
+
+  it("leaves the default streaming line unchanged when the option is off", () => {
+    const reading = meter({ active: true, instantTps: 92.4, avgTps: 78.1, totalTokens: 1842 });
+    expect(formatMeterText(reading, defaultConfig)).toBe("92.4 TPS · avg 78.1 · 1,842 tok");
   });
 });

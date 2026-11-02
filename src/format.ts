@@ -104,6 +104,9 @@ export function formatElapsedTime(ms: number): string {
  * While streaming, the leading figure is the rolling instantaneous rate; once the turn
  * settles it becomes the average, so a frozen meter reads as a summary rather than a
  * stale live value.
+ *
+ * With `streamOnlyTps`, a generating step renders only that rate; every other field is
+ * held back until the step settles, which keeps the live line to a single changing number.
  */
 export function formatMeterText(reading: MeterReading, config: Config): string {
   const parts: string[] = [];
@@ -111,6 +114,9 @@ export function formatMeterText(reading: MeterReading, config: Config): string {
 
   if (config.showInstant) {
     parts.push(`${displayTps.toFixed(1)} TPS`);
+  }
+  if (config.streamOnlyTps && reading.active) {
+    return parts.length > 0 ? parts.join(" · ") : "TPS meter";
   }
   if (config.showAverage) {
     parts.push(`avg ${reading.avgTps.toFixed(1)}`);

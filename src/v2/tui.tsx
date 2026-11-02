@@ -322,6 +322,9 @@ function MeterView(props: {
       return "";
     }
     const base = formatMeterText(snapshot, props.config);
+    if (props.config.streamOnlyTps && snapshot.active) {
+      return base;
+    }
     const extra: string[] = [];
     if (props.mode() === "detailed") {
       // Time this turn spent running tools. It is never inside a step's rate window.

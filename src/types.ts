@@ -43,6 +43,12 @@ export interface Config {
   /** Whether to show time to first token in the footer (default: false) */
   showTtft: boolean;
 
+  /**
+   * Whether to show only TPS while a step is generating. Average, token count, cache and
+   * TTFT then appear once that step settles (default: false)
+   */
+  streamOnlyTps: boolean;
+
   /** Display format style (default: 'compact') */
   format: 'compact' | 'verbose' | 'minimal';
 

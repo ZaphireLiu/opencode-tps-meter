@@ -236,6 +236,7 @@ TPS_METER_SHOW_TOTAL_TOKENS=true
 TPS_METER_SHOW_ELAPSED=false
 TPS_METER_SHOW_CACHE_HIT=true
 TPS_METER_SHOW_TTFT=false
+TPS_METER_STREAM_ONLY_TPS=false
 
 # Token counting heuristic
 TPS_METER_FALLBACK_HEURISTIC=chars_div_4  # chars_div_4 | chars_div_3 | words_div_0_75
@@ -263,6 +264,7 @@ Create `.opencode/tps-meter.json` in your project root:
   "showElapsed": false,
   "showCacheHit": true,
   "showTtft": false,
+  "streamOnlyTps": false,
   "format": "compact",
   "minVisibleTPS": 0,
   "fallbackTokenHeuristic": "chars_div_4",
@@ -300,6 +302,7 @@ Footer: `92.4 TPS · avg 78.1 · 1,842 tok · 00:23`
 | `showElapsed` | `boolean` | `false` | Show elapsed time |
 | `showCacheHit` | `boolean` | `true` | Show the prompt cache hit rate (provider-reported) |
 | `showTtft` | `boolean` | `false` | Show time to first token in the footer |
+| `streamOnlyTps` | `boolean` | `false` | While a step is generating, show only TPS; avg, tokens, cache and TTFT appear once it settles |
 | `format` | `string` | `"compact"` | Reserved: `compact`, `verbose` or `minimal` is accepted but does not change the display yet |
 | `minVisibleTPS` | `number` | `0` | Minimum TPS value to trigger display |
 | `fallbackTokenHeuristic` | `string` | `"chars_div_4"` | Token counting method |
