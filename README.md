@@ -23,7 +23,7 @@
 
 A live tokens-per-second meter plugin for OpenCode. Track AI token throughput in real-time with a configurable rolling window display. Only tracks **assistant role** messages — user and system messages are automatically excluded from metrics. File parts are also excluded from token counting.
 
-> **Fork defaults:** `streamOnlyTps` is on and `showAverage` is off. While a step generates the footer shows only the live rate; once it settles the rate and average disappear and the usage summary (tokens, cache, TTFT) takes over.
+> **Fork defaults:** `streamOnlyTps` is on and `showAverage` is off. While a step generates the footer shows only the live rate; once it settles the rate and average disappear and the usage summary (tokens, cache, TTFT) takes over. See [FORK.md](./FORK.md) for the full diff and rebase checklist.
 
 > **Note:** Time display is disabled by default. Enable with `showElapsed: true` in configuration.
 
