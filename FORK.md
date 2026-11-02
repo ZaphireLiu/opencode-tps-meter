@@ -341,7 +341,8 @@ opencode plugin add "git+https://github.com/ZaphireLiu/opencode-tps-meter.git#re
 
 - `release-vX` 分支由 workflow 自动创建，包含构建好的 `dist/`
 - `release` 指向最新版本；长期使用建议固定到 `release-vX`
-- `opencode plugin add` 支持 Git package specifier，已在本地用临时仓库验证
+- `opencode plugin add` 支持 Git package specifier；本地已用临时 Git 仓库验证过 spec 解析
+- 实际安装还要求宿主的 npm/git 能访问 GitHub；失败时改用 tarball 方式
 
 方式二：Release tarball（离线）
 

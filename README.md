@@ -82,6 +82,8 @@ opencode plugin add "git+https://github.com/ZaphireLiu/opencode-tps-meter.git#re
   so nothing is built on the user's machine.
 - `#release` always points at the newest release; prefer a pinned `release-vX` branch.
 - The package is added to the global OpenCode configuration automatically.
+- This needs a Git client that can reach GitHub. If your package manager cannot install
+  Git specs, use the release tarball below.
 
 If you prefer to edit configuration by hand, add this to `~/.config/opencode/opencode.jsonc`:
 
