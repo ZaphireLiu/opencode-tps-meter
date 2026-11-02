@@ -1,6 +1,6 @@
 {
   "name": "opencode-tps-meter",
-  "version": "0.4.2",
+  "version": "0.4.2-fork.1",
   "description": "Live tokens-per-second meter for OpenCode (v1 and v2)",
   "type": "module",
   "main": "./dist/index.js",
@@ -49,10 +49,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChiR24/opencode-tps-meter.git"
+    "url": "git+https://github.com/ZaphireLiu/opencode-tps-meter.git"
   },
-  "homepage": "https://github.com/ChiR24/opencode-tps-meter#readme",
-  "bugs": "https://github.com/ChiR24/opencode-tps-meter/issues",
+  "homepage": "https://github.com/ZaphireLiu/opencode-tps-meter#readme",
+  "bugs": {
+    "url": "https://github.com/ZaphireLiu/opencode-tps-meter/issues"
+  },
   "devDependencies": {
     "@opencode-ai/plugin": "^1.15.13",
     "@opentui/core": "^0.3.0",

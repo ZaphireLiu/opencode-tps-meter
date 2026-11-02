@@ -318,3 +318,76 @@ upstream https://github.com/ChiR24/opencode-tps-meter.git    # 上游
 - TTFT 只在能拿到 turn start 的 V2 上出现；拿不到时不会显示
 - `streamOnlyTps` 只影响 footer 文本，不影响 `/tps` 仪表盘、ledger 和校准
 - 默认 `showAverage: false` 是 fork 的行为差异；恢复上游显示需要同时设置 `streamOnlyTps: false` 和 `showAverage: true`
+
+---
+
+## 9. 分发与发版
+
+### 9.1 分发方式
+
+不发布 npm 包，使用 GitHub Release：
+
+- 版本号从 `0.4.2-fork.1` 开始
+- 插件 id 保持 `opencode-tps-meter`，作为上游的 drop-in 替代
+- 保留 MIT 许可，`LICENSE` 同时标注上游与 fork 版权
+
+### 9.2 用户安装
+
+方式一：Git package（推荐，需要访问 GitHub）
+
+```bash
+opencode plugin add "git+https://github.com/ZaphireLiu/opencode-tps-meter.git#release-v0.4.2-fork.1"
+```
+
+- `release-vX` 分支由 workflow 自动创建，包含构建好的 `dist/`
+- `release` 指向最新版本；长期使用建议固定到 `release-vX`
+- `opencode plugin add` 支持 Git package specifier，已在本地用临时仓库验证
+
+方式二：Release tarball（离线）
+
+1. 下载 release 里的 `opencode-tps-meter-dist.tar.gz`
+2. 解压到固定目录，例如 `~/.local/share/opencode/plugins/opencode-tps-meter-fork`
+3. 在 `opencode.jsonc` 中注册这个目录（不是仓库根目录）：
+
+```jsonc
+"plugins": [
+  {
+    "package": "file:///home/me/.local/share/opencode/plugins/opencode-tps-meter-fork",
+    "options": { "showTtft": true }
+  }
+]
+```
+
+### 9.3 发版流程
+
+1. 改 `package.json` 的 version，例如 `0.4.2-fork.2`
+2. 提交并推送 `feat/stream-only-tps`
+3. 打标签并推送：
+
+```bash
+git tag v0.4.2-fork.2
+git push origin v0.4.2-fork.2
+```
+
+4. `.github/workflows/release.yml` 自动执行：
+   - `bun install --frozen-lockfile`
+   - `bun test`
+   - `bun run build`
+   - `bun pm pack` 生成 npm tarball
+   - 生成 `opencode-tps-meter-dist.tar.gz`
+   - 强制更新 `release` 分支，并创建 `release-vX` 分支
+   - 创建 GitHub Release 并上传两个资产
+
+### 9.4 资产说明
+
+| 资产 | 用途 |
+| --- | --- |
+| `opencode-tps-meter-0.4.2-fork.N.tgz` | npm 打包产物；可以 `npm pack` 检查，也可作为离线安装包 |
+| `opencode-tps-meter-dist.tar.gz` | 解压即用的 `dist/`，用于 `file://` 注册 |
+
+### 9.5 注意
+
+- Git 安装请使用 `release` 或 `release-vX` 分支，**不要用 tag**：tag 指向源码提交，里面没有 `dist/`
+- 不要同时安装上游 npm 包和本 fork，插件 id 相同，可能互相覆盖或被去重
+- `dist/` 仍然被 `.gitignore` 忽略；只有 release 分支会强制提交它
+- 版本号里的 `-fork.N` 是 prerelease，语义上低于 `0.4.2`

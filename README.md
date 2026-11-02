@@ -67,56 +67,59 @@ One package supports both OpenCode generations. They install as separate binarie
 
 ---
 
-## Installation
+## Installation (this fork)
 
-### OpenCode v1
+This fork is distributed through **GitHub Releases**, not npm. Releases are versioned as
+`0.4.2-fork.N`.
 
-Install with OpenCode's plugin installer so the persistent TUI entrypoint is registered:
-
-```bash
-opencode plug opencode-tps-meter@latest
-```
-
-For manual installation, add the package to your TUI config (`~/.config/opencode/tui.json` or `tui.jsonc`) for persistent display:
-
-```json
-{
-  "plugin": ["opencode-tps-meter@latest"]
-}
-```
-
-### OpenCode v2 (`opencode2`)
+### Git package (recommended)
 
 ```bash
-npm install opencode-tps-meter
+opencode plugin add "git+https://github.com/ZaphireLiu/opencode-tps-meter.git#release-v0.4.2-fork.1"
 ```
 
-v2 replaced layered `tui.json(c)` files with a single global `cli.json`, and renamed the plugin config key to `plugins`. Register in `opencode.json`:
+- `release-vX` branches are created by the release workflow and contain the built `dist/`,
+  so nothing is built on the user's machine.
+- `#release` always points at the newest release; prefer a pinned `release-vX` branch.
+- The package is added to the global OpenCode configuration automatically.
 
-```json
-{
-  "plugins": ["opencode-tps-meter@latest"]
-}
+If you prefer to edit configuration by hand, add this to `~/.config/opencode/opencode.jsonc`:
+
+```jsonc
+"plugins": [
+  {
+    "package": "git+https://github.com/ZaphireLiu/opencode-tps-meter.git#release-v0.4.2-fork.1",
+    "options": { "showTtft": true }
+  }
+]
 ```
 
-The single package name is all you need — the default export carries both plugin shapes, so v1 reads `server` and v2 reads `setup`.
+### Release tarball (offline)
 
-> **Do not use subpath specifiers in `plugins`.** v2 treats every string in that array as an npm package name or a local path, so `"opencode-tps-meter/v2"` is not resolved as a subpath — it is attempted as a package install and fails. The `opencode-tps-meter/v2` and `/v2/tui` exports exist for programmatic `import` only.
+Download `opencode-tps-meter-dist.tar.gz` from the release page, extract it to a stable
+directory, and register that directory:
 
-v2 also accepts inline options, which take priority over config files and environment variables:
-
-```json
-{
-  "plugins": [
-    {
-      "package": "opencode-tps-meter@latest",
-      "options": { "showElapsed": true, "enableColorCoding": true }
-    }
-  ]
-}
+```bash
+mkdir -p ~/.local/share/opencode/plugins/opencode-tps-meter-fork
+tar -xzf opencode-tps-meter-dist.tar.gz -C ~/.local/share/opencode/plugins/opencode-tps-meter-fork
 ```
 
----
+```jsonc
+"plugins": [
+  {
+    "package": "file:///home/me/.local/share/opencode/plugins/opencode-tps-meter-fork",
+    "options": { "showTtft": true }
+  }
+]
+```
+
+The directory must contain `index.mjs` and `tui.mjs` (the contents of `dist/`), not the
+repository root.
+
+### Upstream package
+
+The upstream npm package `opencode-tps-meter` does **not** include these fork changes.
+Installing it from npm gives you the original behavior, not this fork.
 
 ## Quick Start
 
