@@ -1,0 +1,58 @@
+{
+  "name": "opencode-tps-meter",
+  "version": "0.4.2-fork.1",
+  "description": "Live tokens-per-second meter for OpenCode (v1 and v2)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./server": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    },
+    "./tui": {
+      "types": "./dist/tui.d.ts",
+      "import": "./dist/tui.mjs"
+    },
+    "./v2": {
+      "types": "./dist/v2/server.d.ts",
+      "import": "./dist/v2/server.mjs"
+    },
+    "./v2/tui": {
+      "types": "./dist/v2/tui.d.ts",
+      "import": "./dist/v2/tui.mjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZaphireLiu/opencode-tps-meter.git"
+  },
+  "homepage": "https://github.com/ZaphireLiu/opencode-tps-meter#readme",
+  "bugs": {
+    "url": "https://github.com/ZaphireLiu/opencode-tps-meter/issues"
+  },
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opencode2",
+    "ai",
+    "tokens"
+  ],
+  "license": "MIT"
+}
