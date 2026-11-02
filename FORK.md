@@ -15,6 +15,7 @@
 | 项目 | 值 |
 | --- | --- |
 | 上游仓库 | `https://github.com/ChiR24/opencode-tps-meter` |
+| 本 fork | `https://github.com/ZaphireLiu/opencode-tps-meter` |
 | 基线 tag | `v0.4.2` |
 | 基线 commit | `a6e050d` |
 | 本地工作分支 | `feat/stream-only-tps` |
@@ -22,9 +23,11 @@
 
 分支约定：
 
-- `main` 只用来跟随上游，不直接提交
-- 所有改动都在 `feat/stream-only-tps`
-- 以后推到自己的 GitHub fork 时，建议 `origin` 指自己的 fork，`upstream` 指 `ChiR24`
+- `origin` 指自己的 fork：`git@github.com:ZaphireLiu/opencode-tps-meter.git`
+- `upstream` 指上游：`https://github.com/ChiR24/opencode-tps-meter.git`
+- `main` 用来镜像上游，不直接提交业务改动
+- 所有改动都在 `feat/stream-only-tps`，已推送到 `origin`
+- SSH 走 `ssh.github.com:443`（见 `~/.ssh/config`），22 端口在本机不通
 
 ---
 
@@ -186,11 +189,17 @@ rebase 后如果上游新增了 footer 断言，通常两种处理：
 ```bash
 cd ~/Workshop/opencode-tps-meter
 
-# 1. 拉上游（GitHub 直连不通时挂代理）
-git fetch origin
+# 1. 拉上游
+git fetch upstream
 
-# 2. 变基
-git rebase origin/main
+# 2. 变基到上游
+git rebase upstream/main
+
+# 可选：同步 fork 的 main
+git checkout main
+git merge --ff-only upstream/main
+git push origin main
+git checkout feat/stream-only-tps
 
 # 3. 重新安装与验证
 export PATH="$HOME/.bun/bin:$PATH"
@@ -283,6 +292,13 @@ opencode api get /api/plugin
     "options": { "showTtft": true }
   }
 ]
+```
+
+远端：
+
+```text
+origin   git@github.com:ZaphireLiu/opencode-tps-meter.git   # 自己的 fork
+upstream https://github.com/ChiR24/opencode-tps-meter.git    # 上游
 ```
 
 相关约定：
